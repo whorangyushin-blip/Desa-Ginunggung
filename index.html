@@ -294,14 +294,17 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
                 <!-- Sambutan -->
                 <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-10 flex flex-col md:flex-row items-center gap-8">
-                    <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-950 flex flex-col items-center justify-center text-white flex-shrink-0 shadow-lg border-4 border-gold-400/50">
-                        <i class="fa-solid fa-user-tie text-6xl text-gold-400 mb-2"></i>
-                        <span class="text-[10px] uppercase tracking-widest font-bold text-emerald-200">Kepala Desa</span>
+                    <div class="w-40 h-44 sm:w-48 sm:h-52 rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-950 flex flex-col items-center justify-center text-white flex-shrink-0 shadow-lg border-4 border-gold-400/50 overflow-hidden relative">
+                        <img id="pub-kades-foto" src="" alt="Foto Kepala Desa" class="hidden w-full h-full object-cover">
+                        <div id="pub-kades-placeholder" class="flex flex-col items-center justify-center p-4 text-center">
+                            <i class="fa-solid fa-user-tie text-6xl text-gold-400 mb-2"></i>
+                            <span class="text-[10px] uppercase tracking-widest font-bold text-emerald-200">Kepala Desa</span>
+                        </div>
                     </div>
-                    <div class="space-y-3 text-center md:text-left">
+                    <div class="space-y-3 text-center md:text-left flex-grow">
                         <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Sambutan Kepala Desa Ginunggung</span>
-                        <h3 class="text-2xl font-extrabold text-slate-900">Membangun Desa Digital yang Melayani</h3>
-                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed italic">
+                        <h3 id="pub-sambutan-judul" class="text-2xl font-extrabold text-slate-900">Membangun Desa Digital yang Melayani</h3>
+                        <p id="pub-sambutan-isi" class="text-slate-600 text-sm sm:text-base leading-relaxed italic whitespace-pre-line">
                             "Assalamu'alaikum Warahmatullahi Wabarakatuh. Kehadiran sistem informasi pelayanan mandiri Desa Ginunggung ini adalah wujud nyata komitmen Pemerintah Desa dalam mempermudah urusan administrasi masyarakat serta membuka ruang aspirasi seluas-luasnya bagi seluruh warga."
                         </p>
                         <div class="pt-2">
@@ -708,7 +711,10 @@
                         <i class="fa-solid fa-chart-pie mr-1.5"></i> Analitik
                     </button>
                     <button onclick="switchAdminTab('surat')" data-admtab="surat" class="adm-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
-                        <i class="fa-solid fa-print mr-1.5"></i> Layanan & Cetak Surat <span id="badge-surat-baru" class="ml-1 bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded-full text-[10px]">0</span>
+                        <i class="fa-solid fa-print mr-1.5"></i> Surat Keluar <span id="badge-surat-baru" class="ml-1 bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded-full text-[10px]">0</span>
+                    </button>
+                    <button onclick="switchAdminTab('suratmasuk')" data-admtab="suratmasuk" class="adm-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-envelope-open-text mr-1.5"></i> Surat Masuk & Undangan <span id="badge-suratmasuk-total" class="ml-1 bg-sky-600 text-white px-1.5 py-0.2 rounded-full text-[10px]">0</span>
                     </button>
                     <button onclick="switchAdminTab('pengaduan')" data-admtab="pengaduan" class="adm-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
                         <i class="fa-solid fa-bullhorn mr-1.5"></i> Pengaduan Warga <span id="badge-aduan-baru" class="ml-1 bg-rose-500 text-white px-1.5 py-0.2 rounded-full text-[10px]">0</span>
@@ -781,6 +787,42 @@
                                 </tr>
                             </thead>
                             <tbody id="adm-surat-tbody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN TAB 2B: SURAT MASUK & UNDANGAN -->
+                <div id="admtab-suratmasuk" class="adm-tab-content hidden space-y-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 class="font-extrabold text-lg text-slate-900">Arsip Surat Masuk & Undangan Resmi</h3>
+                            <p class="text-xs text-slate-500">Catat agenda surat masuk, undangan rapat/kegiatan dari instansi luar, lengkap dengan upload foto/scan dokumen fisik.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            <select id="filter-jenis-suratmasuk" onchange="renderAdminSuratMasukTable()" class="p-2.5 border border-slate-300 rounded-xl text-xs font-bold outline-none">
+                                <option value="">Semua Jenis</option>
+                                <option value="Surat Masuk">Surat Masuk</option>
+                                <option value="Undangan">Undangan</option>
+                            </select>
+                            <button onclick="openModalSuratMasukForm()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus"></i> Catat Surat Masuk / Undangan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs uppercase text-slate-600 font-bold">
+                                <tr>
+                                    <th class="p-4">No. Agenda / No. Surat</th>
+                                    <th class="p-4">Jenis & Pengirim</th>
+                                    <th class="p-4">Perihal & Jadwal Acara</th>
+                                    <th class="p-4 text-center">Foto Dokumen</th>
+                                    <th class="p-4">Disposisi / Status</th>
+                                    <th class="p-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-suratmasuk-tbody" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -891,15 +933,27 @@
                     </div>
                 </div>
 
-                <!-- ADMIN TAB 6: PENGATURAN KOP SURAT & BACKUP -->
+                <!-- ADMIN TAB 6: PENGATURAN KOP SURAT, SAMBUTAN KADES & BACKUP -->
                 <div id="admtab-pengaturan" class="adm-tab-content hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                        <h3 class="font-extrabold text-lg text-slate-900 border-b pb-3">Pengaturan Identitas & KOP Surat Resmi</h3>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Logo Desa / Kabupaten (Tampil di Header & KOP Surat)</label>
-                            <div class="flex items-center gap-4">
-                                <img id="cfg-logo-preview" src="" class="w-16 h-16 object-contain border rounded-xl p-1 bg-slate-50">
-                                <input type="file" accept="image/*" onchange="uploadNewLogo(event)" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold">
+                        <h3 class="font-extrabold text-lg text-slate-900 border-b pb-3">Identitas Desa, KOP Surat & Sambutan Kades</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Logo Desa / Kabupaten</label>
+                                <div class="flex items-center gap-3">
+                                    <img id="cfg-logo-preview" src="" class="w-14 h-14 object-contain border rounded-xl p-1 bg-slate-50">
+                                    <input type="file" accept="image/*" onchange="uploadNewLogo(event)" class="text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Foto Kepala Desa (Beranda)</label>
+                                <div class="flex items-center gap-3">
+                                    <img id="cfg-kades-foto-preview" src="" class="w-14 h-14 object-cover border rounded-xl bg-slate-100">
+                                    <div class="space-y-1">
+                                        <input type="file" accept="image/*" onchange="uploadKadesFoto(event)" class="text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-amber-50 file:text-amber-700 file:font-bold">
+                                        <button type="button" onclick="hapusKadesFoto()" class="text-[10px] text-rose-600 hover:underline block">Hapus Foto</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -917,11 +971,22 @@
                             <input type="text" id="cfg-alamat-kantor" class="w-full p-2.5 border rounded-xl text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Nama Kepala Desa (Penandatangan)</label>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Nama Kepala Desa (Penandatangan & Beranda)</label>
                             <input type="text" id="cfg-nama-kades" class="w-full p-2.5 border rounded-xl text-sm">
                         </div>
-                        <button onclick="saveDesaConfig()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-3 rounded-xl text-sm shadow">
-                            Simpan Pengaturan KOP & Desa
+                        <div class="pt-2 border-t border-slate-100 space-y-3">
+                            <div class="text-xs font-extrabold uppercase text-emerald-800">Edit Teks Sambutan Kepala Desa di Beranda</div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Judul Sambutan</label>
+                                <input type="text" id="cfg-sambutan-judul" class="w-full p-2.5 border rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Isi Pesan Sambutan</label>
+                                <textarea id="cfg-sambutan-isi" rows="4" class="w-full p-2.5 border rounded-xl text-sm leading-relaxed"></textarea>
+                            </div>
+                        </div>
+                        <button onclick="saveDesaConfig()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-3 rounded-xl text-sm shadow">
+                            Simpan Pengaturan KOP, Foto & Sambutan Kades
                         </button>
                     </div>
 
@@ -1065,7 +1130,7 @@
         // =================================================================
         function initDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open('DesaGinunggungV2DB', 1);
+                const req = indexedDB.open('DesaGinunggungV2DB', 2);
                 req.onupgradeneeded = (e) => {
                     const database = e.target.result;
                     if (!database.objectStoreNames.contains('penduduk')) {
@@ -1074,6 +1139,9 @@
                     }
                     if (!database.objectStoreNames.contains('surat')) {
                         database.createObjectStore('surat', { keyPath: 'id', autoIncrement: true });
+                    }
+                    if (!database.objectStoreNames.contains('suratmasuk')) {
+                        database.createObjectStore('suratmasuk', { keyPath: 'id', autoIncrement: true });
                     }
                     if (!database.objectStoreNames.contains('pengaduan')) {
                         database.createObjectStore('pengaduan', { keyPath: 'id', autoIncrement: true });
@@ -1142,7 +1210,10 @@
                     alamatKantor: 'Jl. Trans Sulawesi No. 01, Desa Ginunggung, Kec. Galang, Kab. Tolitoli',
                     kodePos: '94561',
                     namaKades: 'H. AHMAD SUDIRMAN, S.Sos',
-                    logo: DEFAULT_SVG_LOGO
+                    logo: DEFAULT_SVG_LOGO,
+                    fotoKades: '',
+                    sambutanJudul: 'Membangun Desa Digital yang Melayani',
+                    sambutanIsi: '"Assalamu\'alaikum Warahmatullahi Wabarakatuh. Kehadiran sistem informasi pelayanan mandiri Desa Ginunggung ini adalah wujud nyata komitmen Pemerintah Desa dalam mempermudah urusan administrasi masyarakat serta membuka ruang aspirasi seluas-luasnya bagi seluruh warga."'
                 });
             }
 
@@ -1208,6 +1279,23 @@
                 };
                 sampleData.redaksi = generateDefaultRedaksiSurat(sampleData);
                 await dbOp.add('surat', sampleData);
+            }
+
+            const suratmasuk = await dbOp.getAll('suratmasuk');
+            if (suratmasuk.length === 0) {
+                await dbOp.add('suratmasuk', {
+                    noAgenda: 'SM-001/XI/2026',
+                    noSuratAsal: '005 / 412 / KEC.GLG / XI / 2026',
+                    jenis: 'Undangan',
+                    pengirim: 'Camat Galang - Kabupaten Tolitoli',
+                    tglSurat: '2026-11-10',
+                    tglTerima: '2026-11-11',
+                    perihal: 'Undangan Rapat Koordinasi Evaluasi Realisasi Dana Desa & Ketahanan Pangan',
+                    jadwalAcara: 'Senin, 16 November 2026 • Pukul 09.00 WITA • Aula Kantor Camat Galang',
+                    disposisi: 'Kepala Desa & Kaur Keuangan Hadir',
+                    status: 'Terjadwal',
+                    foto: ''
+                });
             }
 
             const aduan = await dbOp.getAll('pengaduan');
@@ -1565,6 +1653,19 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
                 document.getElementById('header-desa-name').textContent = cfg.namaDesa;
                 document.getElementById('pub-kades-name').textContent = cfg.namaKades;
                 document.getElementById('footer-alamat-text').textContent = `${cfg.alamatKantor}, Kode Pos ${cfg.kodePos}.`;
+
+                const kadesImg = document.getElementById('pub-kades-foto');
+                const kadesPlaceholder = document.getElementById('pub-kades-placeholder');
+                if (cfg.fotoKades) {
+                    kadesImg.src = cfg.fotoKades;
+                    kadesImg.classList.remove('hidden');
+                    kadesPlaceholder.classList.add('hidden');
+                } else {
+                    kadesImg.classList.add('hidden');
+                    kadesPlaceholder.classList.remove('hidden');
+                }
+                if (cfg.sambutanJudul) document.getElementById('pub-sambutan-judul').textContent = cfg.sambutanJudul;
+                if (cfg.sambutanIsi) document.getElementById('pub-sambutan-isi').textContent = cfg.sambutanIsi;
             }
 
             // Statistik Penduduk Real-time
@@ -1592,6 +1693,23 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             `).join('');
 
             // Pengaduan Publik Terbaru
+            const suratmasuk = await dbOp.getAll('suratmasuk');
+            if (suratmasuk.length === 0) {
+                await dbOp.add('suratmasuk', {
+                    noAgenda: 'SM-001/XI/2026',
+                    noSuratAsal: '005 / 412 / KEC.GLG / XI / 2026',
+                    jenis: 'Undangan',
+                    pengirim: 'Camat Galang - Kabupaten Tolitoli',
+                    tglSurat: '2026-11-10',
+                    tglTerima: '2026-11-11',
+                    perihal: 'Undangan Rapat Koordinasi Evaluasi Realisasi Dana Desa & Ketahanan Pangan',
+                    jadwalAcara: 'Senin, 16 November 2026 • Pukul 09.00 WITA • Aula Kantor Camat Galang',
+                    disposisi: 'Kepala Desa & Kaur Keuangan Hadir',
+                    status: 'Terjadwal',
+                    foto: ''
+                });
+            }
+
             const aduan = await dbOp.getAll('pengaduan');
             document.getElementById('pub-recent-aduan').innerHTML = aduan.slice().reverse().slice(0, 4).map(a => `
                 <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
@@ -1617,16 +1735,22 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             const kat = document.getElementById('pub-filter-kategori-berita')?.value || '';
 
             const cardHtml = (b) => `
-                <article class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition p-6 flex flex-col justify-between">
+                <article class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center text-xs mb-3">
-                            <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">${b.kategori}</span>
-                            <span class="text-slate-400">${b.tanggal}</span>
+                        ${b.foto
+                            ? `<div class="h-48 w-full overflow-hidden bg-slate-100"><img src="${b.foto}" alt="${b.judul}" class="w-full h-full object-cover hover:scale-105 transition duration-300"></div>`
+                            : `<div class="h-36 w-full bg-gradient-to-br from-emerald-800 to-emerald-950 flex items-center justify-center text-gold-400/80"><i class="fa-solid fa-newspaper text-4xl"></i></div>`
+                        }
+                        <div class="p-6 pb-2">
+                            <div class="flex justify-between items-center text-xs mb-3">
+                                <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">${b.kategori}</span>
+                                <span class="text-slate-400">${b.tanggal}</span>
+                            </div>
+                            <h4 class="font-bold text-lg text-slate-900 mb-2 leading-snug">${b.judul}</h4>
+                            <p class="text-sm text-slate-600 line-clamp-3">${b.ringkasan}</p>
                         </div>
-                        <h4 class="font-bold text-lg text-slate-900 mb-2 leading-snug">${b.judul}</h4>
-                        <p class="text-sm text-slate-600 line-clamp-3">${b.ringkasan}</p>
                     </div>
-                    <div class="mt-5 pt-3 border-t border-slate-100">
+                    <div class="px-6 pb-5 pt-3 mt-3 border-t border-slate-100">
                         <button onclick="openBeritaDetail(${b.id})" class="text-emerald-700 hover:text-emerald-900 font-bold text-xs flex items-center gap-1">
                             Baca Selengkapnya <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -1646,17 +1770,20 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             const b = await dbOp.get('berita', id);
             if (!b) return;
             openModal(`
-                <div class="p-6 sm:p-8 overflow-y-auto space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">${b.kategori}</span>
-                        <span class="text-xs text-slate-400">${b.tanggal}</span>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-900 leading-tight">${b.judul}</h3>
-                    <div class="text-sm text-slate-700 leading-relaxed space-y-3 border-t pt-4">
-                        ${b.isi.replace(/\n/g, '<br>')}
-                    </div>
-                    <div class="pt-4 border-t flex justify-end">
-                        <button onclick="closeModal()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Tutup</button>
+                <div class="overflow-y-auto">
+                    ${b.foto ? `<img src="${b.foto}" alt="${b.judul}" class="w-full max-h-80 object-cover border-b">` : ''}
+                    <div class="p-6 sm:p-8 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">${b.kategori}</span>
+                            <span class="text-xs text-slate-400">${b.tanggal}</span>
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-slate-900 leading-tight">${b.judul}</h3>
+                        <div class="text-sm text-slate-700 leading-relaxed space-y-3 border-t pt-4">
+                            ${b.isi.replace(/\n/g, '<br>')}
+                        </div>
+                        <div class="pt-4 border-t flex justify-end">
+                            <button onclick="closeModal()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Tutup</button>
+                        </div>
                     </div>
                 </div>
             `);
@@ -1714,6 +1841,23 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
         async function renderAdminDashboard() {
             const warga = await dbOp.getAll('penduduk');
             const surat = await dbOp.getAll('surat');
+            const suratmasuk = await dbOp.getAll('suratmasuk');
+            if (suratmasuk.length === 0) {
+                await dbOp.add('suratmasuk', {
+                    noAgenda: 'SM-001/XI/2026',
+                    noSuratAsal: '005 / 412 / KEC.GLG / XI / 2026',
+                    jenis: 'Undangan',
+                    pengirim: 'Camat Galang - Kabupaten Tolitoli',
+                    tglSurat: '2026-11-10',
+                    tglTerima: '2026-11-11',
+                    perihal: 'Undangan Rapat Koordinasi Evaluasi Realisasi Dana Desa & Ketahanan Pangan',
+                    jadwalAcara: 'Senin, 16 November 2026 • Pukul 09.00 WITA • Aula Kantor Camat Galang',
+                    disposisi: 'Kepala Desa & Kaur Keuangan Hadir',
+                    status: 'Terjadwal',
+                    foto: ''
+                });
+            }
+
             const aduan = await dbOp.getAll('pengaduan');
             const berita = await dbOp.getAll('berita');
             const perangkat = await dbOp.getAll('perangkat');
@@ -1724,7 +1868,9 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             document.getElementById('adm-kpi-aduan').textContent = aduan.length;
             document.getElementById('adm-kpi-berita').textContent = berita.length;
 
+            const suratmasuk = await dbOp.getAll('suratmasuk');
             document.getElementById('badge-surat-baru').textContent = surat.filter(s => s.status === 'Menunggu').length;
+            document.getElementById('badge-suratmasuk-total').textContent = suratmasuk.length;
             document.getElementById('badge-aduan-baru').textContent = aduan.filter(a => a.status === 'Baru').length;
 
             // Charts
@@ -1753,12 +1899,18 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
 
             // Tables
             renderAdminSuratTable(surat);
+            renderAdminSuratMasukTable(suratmasuk);
             renderAdminAduanTable(aduan);
             renderAdminPendudukTable(warga);
 
             document.getElementById('adm-berita-tbody').innerHTML = berita.slice().reverse().map(b => `
                 <tr class="hover:bg-slate-50">
-                    <td class="p-3 font-bold text-slate-900">${b.judul}</td>
+                    <td class="p-3">
+                        <div class="flex items-center gap-3">
+                            ${b.foto ? `<img src="${b.foto}" class="w-12 h-10 rounded-lg object-cover border flex-shrink-0">` : `<div class="w-12 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0"><i class="fa-solid fa-image"></i></div>`}
+                            <span class="font-bold text-slate-900">${b.judul}</span>
+                        </div>
+                    </td>
                     <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-bold">${b.kategori}</span></td>
                     <td class="p-3 text-xs text-slate-500">${b.tanggal}</td>
                     <td class="p-3 text-center space-x-2">
@@ -1782,10 +1934,13 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             // Fill Config Inputs
             if (cfg) {
                 document.getElementById('cfg-logo-preview').src = cfg.logo;
+                document.getElementById('cfg-kades-foto-preview').src = cfg.fotoKades || DEFAULT_SVG_LOGO;
                 document.getElementById('cfg-nama-desa').value = cfg.namaDesa;
                 document.getElementById('cfg-kode-pos').value = cfg.kodePos;
                 document.getElementById('cfg-alamat-kantor').value = cfg.alamatKantor;
                 document.getElementById('cfg-nama-kades').value = cfg.namaKades;
+                document.getElementById('cfg-sambutan-judul').value = cfg.sambutanJudul || '';
+                document.getElementById('cfg-sambutan-isi').value = cfg.sambutanIsi || '';
             }
         }
 
@@ -2308,23 +2463,253 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
         }
 
         // =================================================================
-        // ADMIN: BERITA, PERANGKAT, PENGATURAN & BACKUP JSON
+        // ADMIN: SURAT MASUK & UNDANGAN (DENGAN UPLOAD FOTO)
         // =================================================================
-        async function openModalBeritaForm(id = null) {
-            let b = { judul: '', kategori: 'Pengumuman', ringkasan: '', isi: '' };
-            if (id) b = await dbOp.get('berita', id);
+        let tempSuratMasukFoto = '';
+
+        async function renderAdminSuratMasukTable(data = null) {
+            const list = data || await dbOp.getAll('suratmasuk');
+            const filterJenis = document.getElementById('filter-jenis-suratmasuk')?.value || '';
+            const filtered = list.slice().reverse().filter(sm => !filterJenis || sm.jenis === filterJenis);
+
+            document.getElementById('adm-suratmasuk-tbody').innerHTML = filtered.map(sm => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4">
+                        <div class="font-mono text-xs font-bold text-slate-900">${sm.noAgenda}</div>
+                        <div class="text-[11px] text-slate-500">No. Asal: ${sm.noSuratAsal || '-'}</div>
+                        <div class="text-[10px] text-slate-400">Diterima: ${sm.tglTerima || '-'}</div>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${sm.jenis === 'Undangan' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800'}">${sm.jenis}</span>
+                        <div class="font-bold text-slate-900 text-xs mt-1">${sm.pengirim}</div>
+                    </td>
+                    <td class="p-4 max-w-xs">
+                        <div class="font-bold text-slate-800 text-xs">${sm.perihal}</div>
+                        ${sm.jadwalAcara ? `<div class="text-[11px] text-emerald-700 mt-1"><i class="fa-regular fa-calendar-check mr-1"></i>${sm.jadwalAcara}</div>` : ''}
+                    </td>
+                    <td class="p-4 text-center">
+                        ${sm.foto
+                            ? `<button onclick="previewFotoDokumen('${sm.id}')" class="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-800 px-2.5 py-1.5 rounded-lg text-xs font-bold border">
+                                 <i class="fa-solid fa-image text-emerald-600"></i> Lihat Foto
+                               </button>`
+                            : `<span class="text-[11px] text-slate-400 italic">Tidak ada foto</span>`
+                        }
+                    </td>
+                    <td class="p-4 text-xs">
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">${sm.status || 'Diterima'}</span>
+                        <div class="text-[11px] text-slate-500 mt-1">${sm.disposisi || '-'}</div>
+                    </td>
+                    <td class="p-4 text-center space-x-1">
+                        <button onclick="openModalSuratMasukForm(${sm.id})" class="bg-sky-600 hover:bg-sky-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold" title="Edit">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteItem('suratmasuk', ${sm.id})" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2.5 py-1.5 rounded-lg text-xs" title="Hapus">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada arsip surat masuk atau undangan.</td></tr>';
+        }
+
+        async function previewFotoDokumen(id) {
+            const sm = await dbOp.get('suratmasuk', Number(id));
+            if (!sm || !sm.foto) return;
+            openModal(`
+                <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-gold-400 font-mono">${sm.noAgenda} • ${sm.jenis}</span>
+                        <h4 class="font-bold text-sm">${sm.perihal}</h4>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-300 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="p-4 bg-slate-100 overflow-auto max-h-[80vh] flex justify-center">
+                    <img src="${sm.foto}" alt="Scan Surat" class="max-w-full rounded-xl shadow-lg border bg-white">
+                </div>
+            `, 'max-w-3xl');
+        }
+
+        function handleSuratMasukFotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                tempSuratMasukFoto = e.target.result;
+                const img = document.getElementById('sm-foto-preview');
+                img.src = tempSuratMasukFoto;
+                img.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function openModalSuratMasukForm(id = null) {
+            const allSM = await dbOp.getAll('suratmasuk');
+            const romawiBulan = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][new Date().getMonth()];
+            const today = new Date().toISOString().split('T')[0];
+
+            let sm = {
+                noAgenda: `SM-${String(allSM.length + 1).padStart(3, '0')}/${romawiBulan}/${new Date().getFullYear()}`,
+                noSuratAsal: '',
+                jenis: 'Surat Masuk',
+                pengirim: '',
+                tglSurat: today,
+                tglTerima: today,
+                perihal: '',
+                jadwalAcara: '',
+                disposisi: '',
+                status: 'Diterima',
+                foto: ''
+            };
+            if (id) sm = await dbOp.get('suratmasuk', id);
+            tempSuratMasukFoto = sm.foto || '';
+
             openModal(`
                 <div class="p-5 border-b bg-emerald-950 text-white flex justify-between items-center">
-                    <h3 class="font-bold">${id ? 'Edit Berita' : 'Tulis Berita / Pengumuman Baru'}</h3>
+                    <div>
+                        <h3 class="font-bold text-base">${id ? 'Edit Arsip Surat Masuk / Undangan' : 'Catat Surat Masuk / Undangan Baru'}</h3>
+                        <p class="text-[11px] text-emerald-300">Lengkapi data surat dan unggah foto/scan dokumen fisik</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form onsubmit="saveSuratMasukForm(event, ${id || 'null'})" class="p-6 overflow-y-auto space-y-3.5 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="font-bold block mb-1">Kategori Dokumen *</label>
+                            <select id="sm-jenis" class="w-full p-2.5 border rounded-xl font-bold text-emerald-800">
+                                <option value="Surat Masuk" ${sm.jenis === 'Surat Masuk' ? 'selected' : ''}>Surat Masuk</option>
+                                <option value="Undangan" ${sm.jenis === 'Undangan' ? 'selected' : ''}>Undangan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">No. Agenda Desa *</label>
+                            <input type="text" id="sm-noagenda" value="${sm.noAgenda}" required class="w-full p-2.5 border rounded-xl font-mono font-bold">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">No. Surat Asal *</label>
+                            <input type="text" id="sm-nosuratasal" value="${sm.noSuratAsal}" required placeholder="Nomor pada kop surat pengirim" class="w-full p-2.5 border rounded-xl font-mono">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="font-bold block mb-1">Instansi / Pengirim *</label>
+                            <input type="text" id="sm-pengirim" value="${sm.pengirim}" required placeholder="Contoh: Kecamatan Galang / DPMD" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">Tanggal Surat</label>
+                            <input type="date" id="sm-tglsurat" value="${sm.tglSurat}" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">Tanggal Diterima</label>
+                            <input type="date" id="sm-tglterima" value="${sm.tglTerima}" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-bold block mb-1">Perihal / Isi Ringkas Surat *</label>
+                        <input type="text" id="sm-perihal" value="${sm.perihal}" required placeholder="Contoh: Undangan Musrenbang Kecamatan / Edaran Dana Desa" class="w-full p-2.5 border rounded-xl">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="font-bold block mb-1">Waktu & Tempat Acara (Khusus Undangan)</label>
+                            <input type="text" id="sm-jadwal" value="${sm.jadwalAcara || ''}" placeholder="Hari, Tanggal, Jam & Lokasi Acara" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">Disposisi / Tindak Lanjut</label>
+                            <input type="text" id="sm-disposisi" value="${sm.disposisi || ''}" placeholder="Contoh: Diteruskan ke Sekdes / Kades Hadir" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+                        <div>
+                            <label class="font-bold block mb-1">Status Surat</label>
+                            <select id="sm-status" class="w-full p-2.5 border rounded-xl font-bold">
+                                <option value="Diterima" ${sm.status === 'Diterima' ? 'selected' : ''}>Diterima</option>
+                                <option value="Terjadwal" ${sm.status === 'Terjadwal' ? 'selected' : ''}>Terjadwal (Undangan)</option>
+                                <option value="Didisposisi" ${sm.status === 'Didisposisi' ? 'selected' : ''}>Sudah Didisposisi</option>
+                                <option value="Selesai" ${sm.status === 'Selesai' ? 'selected' : ''}>Selesai / Diarsipkan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">Upload Foto / Scan Surat Fisik</label>
+                            <input type="file" accept="image/*" onchange="handleSuratMasukFotoUpload(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold">
+                            <img id="sm-foto-preview" src="${sm.foto || ''}" class="${sm.foto ? '' : 'hidden'} mt-2 h-28 rounded-xl border object-cover">
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t flex justify-end gap-2">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 rounded-xl font-bold">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-emerald-700 text-white rounded-xl font-bold">Simpan Arsip</button>
+                    </div>
+                </form>
+            `, 'max-w-3xl');
+        }
+
+        async function saveSuratMasukForm(e, id) {
+            e.preventDefault();
+            const obj = {
+                jenis: document.getElementById('sm-jenis').value,
+                noAgenda: document.getElementById('sm-noagenda').value.trim(),
+                noSuratAsal: document.getElementById('sm-nosuratasal').value.trim(),
+                pengirim: document.getElementById('sm-pengirim').value.trim(),
+                tglSurat: document.getElementById('sm-tglsurat').value,
+                tglTerima: document.getElementById('sm-tglterima').value,
+                perihal: document.getElementById('sm-perihal').value.trim(),
+                jadwalAcara: document.getElementById('sm-jadwal').value.trim(),
+                disposisi: document.getElementById('sm-disposisi').value.trim(),
+                status: document.getElementById('sm-status').value,
+                foto: tempSuratMasukFoto
+            };
+            if (id) obj.id = id;
+            id ? await dbOp.put('suratmasuk', obj) : await dbOp.add('suratmasuk', obj);
+            showToast(`${obj.jenis} berhasil disimpan ke arsip`);
+            closeModal();
+            await refreshAllUI();
+        }
+
+        // =================================================================
+        // ADMIN: BERITA (DENGAN FOTO), PERANGKAT, PENGATURAN & BACKUP JSON
+        // =================================================================
+        let tempBeritaFoto = '';
+
+        function handleBeritaFotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                tempBeritaFoto = e.target.result;
+                const img = document.getElementById('fb-foto-preview');
+                img.src = tempBeritaFoto;
+                img.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function openModalBeritaForm(id = null) {
+            let b = { judul: '', kategori: 'Pengumuman', ringkasan: '', isi: '', foto: '' };
+            if (id) b = await dbOp.get('berita', id);
+            tempBeritaFoto = b.foto || '';
+
+            openModal(`
+                <div class="p-5 border-b bg-emerald-950 text-white flex justify-between items-center">
+                    <h3 class="font-bold">${id ? 'Edit Berita & Foto' : 'Tulis Berita / Pengumuman Baru'}</h3>
                     <button onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <form onsubmit="saveBeritaForm(event, ${id || 'null'})" class="p-6 space-y-3 text-xs">
+                <form onsubmit="saveBeritaForm(event, ${id || 'null'})" class="p-6 overflow-y-auto space-y-3 text-xs">
                     <div><label class="font-bold block mb-1">Judul Berita *</label><input type="text" id="fb-judul" value="${b.judul}" required class="w-full p-2.5 border rounded-xl"></div>
-                    <div><label class="font-bold block mb-1">Kategori</label>
-                        <select id="fb-kat" class="w-full p-2.5 border rounded-xl">
-                            ${['Pengumuman','Kegiatan','Pembangunan','Bansos'].map(k => `<option value="${k}" ${b.kategori === k ? 'selected' : ''}>${k}</option>`).join('')}
-                        </select>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="font-bold block mb-1">Kategori</label>
+                            <select id="fb-kat" class="w-full p-2.5 border rounded-xl">
+                                ${['Pengumuman','Kegiatan','Pembangunan','Bansos'].map(k => `<option value="${k}" ${b.kategori === k ? 'selected' : ''}>${k}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="font-bold block mb-1">Foto Berita / Dokumentasi</label>
+                            <input type="file" accept="image/*" onchange="handleBeritaFotoUpload(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold">
+                        </div>
                     </div>
+                    <img id="fb-foto-preview" src="${b.foto || ''}" class="${b.foto ? '' : 'hidden'} h-36 w-full object-cover rounded-xl border">
                     <div><label class="font-bold block mb-1">Ringkasan Singkat *</label><textarea id="fb-ringkasan" rows="2" required class="w-full p-2.5 border rounded-xl">${b.ringkasan}</textarea></div>
                     <div><label class="font-bold block mb-1">Isi Lengkap Berita *</label><textarea id="fb-isi" rows="5" required class="w-full p-2.5 border rounded-xl">${b.isi}</textarea></div>
                     <div class="pt-3 border-t flex justify-end gap-2">
@@ -2337,16 +2722,18 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
 
         async function saveBeritaForm(e, id) {
             e.preventDefault();
+            const existing = id ? await dbOp.get('berita', id) : null;
             const obj = {
                 judul: document.getElementById('fb-judul').value.trim(),
                 kategori: document.getElementById('fb-kat').value,
                 ringkasan: document.getElementById('fb-ringkasan').value.trim(),
                 isi: document.getElementById('fb-isi').value.trim(),
-                tanggal: new Date().toISOString().split('T')[0]
+                foto: tempBeritaFoto,
+                tanggal: existing?.tanggal || new Date().toISOString().split('T')[0]
             };
             if (id) obj.id = id;
             id ? await dbOp.put('berita', obj) : await dbOp.add('berita', obj);
-            showToast('Berita berhasil diterbitkan');
+            showToast('Berita & foto berhasil diterbitkan');
             closeModal();
             await refreshAllUI();
         }
@@ -2404,14 +2791,40 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             reader.readAsDataURL(file);
         }
 
+        async function uploadKadesFoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const cfg = await dbOp.get('config', 'desa_profile');
+                cfg.fotoKades = e.target.result;
+                await dbOp.put('config', cfg);
+                document.getElementById('cfg-kades-foto-preview').src = cfg.fotoKades;
+                showToast('Foto Kepala Desa berhasil diperbarui');
+                await refreshAllUI();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function hapusKadesFoto() {
+            const cfg = await dbOp.get('config', 'desa_profile');
+            cfg.fotoKades = '';
+            await dbOp.put('config', cfg);
+            document.getElementById('cfg-kades-foto-preview').src = DEFAULT_SVG_LOGO;
+            showToast('Foto Kepala Desa dikembalikan ke ikon default');
+            await refreshAllUI();
+        }
+
         async function saveDesaConfig() {
             const cfg = await dbOp.get('config', 'desa_profile');
             cfg.namaDesa = document.getElementById('cfg-nama-desa').value.trim();
             cfg.kodePos = document.getElementById('cfg-kode-pos').value.trim();
             cfg.alamatKantor = document.getElementById('cfg-alamat-kantor').value.trim();
             cfg.namaKades = document.getElementById('cfg-nama-kades').value.trim();
+            cfg.sambutanJudul = document.getElementById('cfg-sambutan-judul').value.trim();
+            cfg.sambutanIsi = document.getElementById('cfg-sambutan-isi').value.trim();
             await dbOp.put('config', cfg);
-            showToast('Pengaturan KOP Surat & Desa berhasil disimpan');
+            showToast('Pengaturan KOP Surat, Foto & Sambutan Kades berhasil disimpan');
             await refreshAllUI();
         }
 
@@ -2421,6 +2834,7 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
                 exportedAt: new Date().toISOString(),
                 penduduk: await dbOp.getAll('penduduk'),
                 surat: await dbOp.getAll('surat'),
+                suratmasuk: await dbOp.getAll('suratmasuk'),
                 pengaduan: await dbOp.getAll('pengaduan'),
                 berita: await dbOp.getAll('berita'),
                 perangkat: await dbOp.getAll('perangkat'),
@@ -2443,7 +2857,7 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             reader.onload = async (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    for (const store of ['penduduk', 'surat', 'pengaduan', 'berita', 'perangkat', 'config']) {
+                    for (const store of ['penduduk', 'surat', 'suratmasuk', 'pengaduan', 'berita', 'perangkat', 'config']) {
                         if (Array.isArray(data[store])) {
                             await dbOp.clear(store);
                             for (const item of data[store]) await dbOp.put(store, item);
