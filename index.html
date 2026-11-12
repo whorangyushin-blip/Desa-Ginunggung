@@ -1653,8 +1653,7 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
                     </div>
                     <h3 class="text-2xl font-extrabold text-slate-900 leading-tight">${b.judul}</h3>
                     <div class="text-sm text-slate-700 leading-relaxed space-y-3 border-t pt-4">
-                        ${b.isi.replace(/
-/g, '<br>')}
+                        ${b.isi.replace(/\n/g, '<br>')}
                     </div>
                     <div class="pt-4 border-t flex justify-end">
                         <button onclick="closeModal()" class="bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold">Tutup</button>
@@ -2029,8 +2028,7 @@ Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan 
             const judulSuratKapital = s.jenis.toUpperCase();
 
             // Format isi redaksi menjadi paragraf & tabel rapi
-            const formattedBody = s.redaksi.split('
-').map(line => {
+            const formattedBody = s.redaksi.split('\n').map(line => {
                 if (line.includes(':') && !line.startsWith('Yang bertanda') && !line.startsWith('Adapun') && !line.startsWith('Memberikan') && !line.startsWith('Menerangkan')) {
                     const parts = line.split(':');
                     const label = parts[0].replace(/^- /, '').trim();
