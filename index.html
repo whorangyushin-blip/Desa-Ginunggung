@@ -677,9 +677,6 @@
                             Masuk ke Dashboard
                         </button>
                     </form>
-                    <div class="mt-5 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 text-center">
-                        Akses Demo: Username <strong>admin</strong> | Password <strong>admin123</strong>
-                    </div>
                 </div>
             </div>
 
@@ -885,7 +882,6 @@
                                     <tr>
                                         <th class="p-3">Nama Pejabat</th>
                                         <th class="p-3">Jabatan</th>
-                                        <th class="p-3">NIP / NIAP</th>
                                         <th class="p-3 text-center">Aksi</th>
                                     </tr>
                                 </thead>
@@ -920,15 +916,9 @@
                             <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Alamat Kantor Desa (Untuk KOP Surat)</label>
                             <input type="text" id="cfg-alamat-kantor" class="w-full p-2.5 border rounded-xl text-sm">
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Nama Kepala Desa (Penandatangan)</label>
-                                <input type="text" id="cfg-nama-kades" class="w-full p-2.5 border rounded-xl text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase text-slate-700 mb-1">NIP / NIAP Kepala Desa</label>
-                                <input type="text" id="cfg-nip-kades" class="w-full p-2.5 border rounded-xl text-sm">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Nama Kepala Desa (Penandatangan)</label>
+                            <input type="text" id="cfg-nama-kades" class="w-full p-2.5 border rounded-xl text-sm">
                         </div>
                         <button onclick="saveDesaConfig()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-3 rounded-xl text-sm shadow">
                             Simpan Pengaturan KOP & Desa
@@ -1152,7 +1142,6 @@
                     alamatKantor: 'Jl. Trans Sulawesi No. 01, Desa Ginunggung, Kec. Galang, Kab. Tolitoli',
                     kodePos: '94561',
                     namaKades: 'H. AHMAD SUDIRMAN, S.Sos',
-                    nipKades: '19750817 200501 1 009',
                     logo: DEFAULT_SVG_LOGO
                 });
             }
@@ -1173,10 +1162,10 @@
             const perangkat = await dbOp.getAll('perangkat');
             if (perangkat.length === 0) {
                 const dummyPerangkat = [
-                    { nama: 'H. Ahmad Sudirman, S.Sos', jabatan: 'Kepala Desa', nip: '19750817 200501 1 009' },
-                    { nama: 'M. Ridwan Thalib, S.AP', jabatan: 'Sekretaris Desa', nip: '19840412 201001 1 014' },
-                    { nama: 'Nurlaila Karim, SE', jabatan: 'Kaur Keuangan', nip: 'NIAP. 004.2016' },
-                    { nama: 'Zulkifli Hasan', jabatan: 'Kasi Pemerintahan & Pelayanan', nip: 'NIAP. 007.2018' }
+                    { nama: 'H. Ahmad Sudirman, S.Sos', jabatan: 'Kepala Desa' },
+                    { nama: 'M. Ridwan Thalib, S.AP', jabatan: 'Sekretaris Desa' },
+                    { nama: 'Nurlaila Karim, SE', jabatan: 'Kaur Keuangan' },
+                    { nama: 'Zulkifli Hasan', jabatan: 'Kasi Pemerintahan & Pelayanan' }
                 ];
                 for (const p of dummyPerangkat) await dbOp.add('perangkat', p);
             }
@@ -1325,7 +1314,10 @@
                     paragrafKhusus = `Bahwa nama tersebut di atas adalah benar-benar warga penduduk yang berdomisili dan bertempat tinggal tetap di ${s.alamat || 'Desa Ginunggung, Kecamatan Galang, Kabupaten Tolitoli'} sejak ${ex.lamaTinggal || 'tercatat dalam administrasi kependudukan desa'} hingga saat surat keterangan ini diterbitkan.`;
                     break;
                 case 'Surat Keterangan Usaha (SKU)':
-                    paragrafKhusus = `Bahwa nama tersebut di atas benar-benar penduduk Desa Ginunggung dan memiliki kegiatan usaha yang masih aktif berjalan hingga saat ini dengan rincian sebagai berikut:\n- Nama Usaha : ${ex.namaUsaha || '-'}\n- Bidang / Jenis Usaha : ${ex.jenisUsaha || '-'}\n- Lokasi Tempat Usaha : ${ex.lokasiUsaha || s.alamat || 'Desa Ginunggung'}`;
+                    paragrafKhusus = `Bahwa nama tersebut di atas benar-benar penduduk Desa Ginunggung dan memiliki kegiatan usaha yang masih aktif berjalan hingga saat ini dengan rincian sebagai berikut:
+- Nama Usaha : ${ex.namaUsaha || '-'}
+- Bidang / Jenis Usaha : ${ex.jenisUsaha || '-'}
+- Lokasi Tempat Usaha : ${ex.lokasiUsaha || s.alamat || 'Desa Ginunggung'}`;
                     break;
                 case 'Surat Keterangan Tidak Mampu (SKTM)':
                     paragrafKhusus = `Bahwa berdasarkan penelitian dan data sosial kemasyarakatan pada Pemerintah Desa Ginunggung, nama tersebut di atas benar-benar tergolong keluarga kurang mampu / berpenghasilan rendah (rata-rata penghasilan ${ex.penghasilan || '-'} per bulan dengan tanggungan ${ex.tanggungan || '-'}).`;
@@ -1334,10 +1326,16 @@
                     paragrafKhusus = `Bahwa nama tersebut di atas adalah penduduk Desa Ginunggung yang selama bertempat tinggal di wilayah kami berkelakuan baik, tidak pernah tersangkut perkara tindak pidana/kriminal, serta tidak terlibat penyalahgunaan narkotika. Surat pengantar ini diberikan untuk mengurus penerbitan SKCK pada ${ex.tujuanSkck || 'Kepolisian Resort Tolitoli'}.`;
                     break;
                 case 'Surat Keterangan Kelahiran':
-                    paragrafKhusus = `Menerangkan dengan sesungguhnya bahwa telah lahir seorang anak:\n- Nama Lengkap Anak : ${ex.namaBayi || '-'}\n- Hari / Tanggal & Jam Lahir : ${ex.tglLahirBayi || '-'}\n- Nama Orang Tua (Ayah / Ibu) : ${ex.namaAyahIbu || '-'}`;
+                    paragrafKhusus = `Menerangkan dengan sesungguhnya bahwa telah lahir seorang anak:
+- Nama Lengkap Anak : ${ex.namaBayi || '-'}
+- Hari / Tanggal & Jam Lahir : ${ex.tglLahirBayi || '-'}
+- Nama Orang Tua (Ayah / Ibu) : ${ex.namaAyahIbu || '-'}`;
                     break;
                 case 'Surat Keterangan Kematian':
-                    paragrafKhusus = `Menerangkan dengan sesungguhnya bahwa telah meninggal dunia seorang warga:\n- Nama Lengkap Almarhum/ah : ${ex.namaAlmarhum || s.nama}\n- Hari / Tanggal & Tempat Meninggal : ${ex.waktuMeninggal || '-'}\n- Penyebab Meninggal Dunia : ${ex.sebabMeninggal || '-'}`;
+                    paragrafKhusus = `Menerangkan dengan sesungguhnya bahwa telah meninggal dunia seorang warga:
+- Nama Lengkap Almarhum/ah : ${ex.namaAlmarhum || s.nama}
+- Hari / Tanggal & Tempat Meninggal : ${ex.waktuMeninggal || '-'}
+- Penyebab Meninggal Dunia : ${ex.sebabMeninggal || '-'}`;
                     break;
                 case 'Surat Keterangan Pindah':
                     paragrafKhusus = `Bahwa nama tersebut di atas mengajukan permohonan ${ex.jenisPindah || 'Pindah Kependudukan'} dengan tujuan/asal alamat lengkap: ${ex.alamatTujuan || '-'}. Yang bersangkutan telah menyelesaikan kewajiban administrasi di tingkat Desa Ginunggung.`;
@@ -1352,13 +1350,30 @@
                     paragrafKhusus = `Bahwa berdasarkan laporan yang bersangkutan kepada Pemerintah Desa Ginunggung, telah terjadi kehilangan barang/dokumen berupa: ${ex.barangHilang || '-'}. Kejadian diperkirakan berlangsung pada ${ex.kronologiHilang || '-'}.`;
                     break;
                 case 'Surat Izin Keramaian':
-                    paragrafKhusus = `Memberikan rekomendasi / pengantar izin penyelenggaraan kegiatan keramaian masyarakat kepada nama tersebut di atas untuk melaksanakan:\n- Nama Kegiatan : ${ex.namaAcara || '-'}\n- Waktu Pelaksanaan : ${ex.waktuAcara || '-'}\n- Jenis Hiburan : ${ex.hiburan || '-'}\nDengan ketentuan wajib menjaga keamanan, ketertiban umum, serta mematuhi peraturan perundang-undangan yang berlaku.`;
+                    paragrafKhusus = `Memberikan rekomendasi / pengantar izin penyelenggaraan kegiatan keramaian masyarakat kepada nama tersebut di atas untuk melaksanakan:
+- Nama Kegiatan : ${ex.namaAcara || '-'}
+- Waktu Pelaksanaan : ${ex.waktuAcara || '-'}
+- Jenis Hiburan : ${ex.hiburan || '-'}
+Dengan ketentuan wajib menjaga keamanan, ketertiban umum, serta mematuhi peraturan perundang-undangan yang berlaku.`;
                     break;
                 default:
                     paragrafKhusus = `Bahwa nama tersebut di atas adalah benar warga Desa Ginunggung, Kecamatan Galang, Kabupaten Tolitoli yang berkelakuan baik.`;
             }
 
-            return `Yang bertanda tangan di bawah ini Kepala Desa Ginunggung, Kecamatan Galang, Kabupaten Tolitoli, Provinsi Sulawesi Tengah, dengan ini menerangkan bahwa:\n\nNama Lengkap : ${s.nama}\nNIK : ${s.nik}\nTempat / Tanggal Lahir : ${s.ttl || '-'}\nJenis Kelamin : ${s.gender || '-'}\nPekerjaan : ${s.pekerjaan || '-'}\nAlamat : ${s.alamat || 'Desa Ginunggung, Kec. Galang, Kab. Tolitoli'}\n\n${paragrafKhusus}\n\nAdapun surat keterangan ini diberikan kepada yang bersangkutan untuk dipergunakan sebagai: ${s.keperluan || 'Kelengkapan Administrasi'}.\n\nDemikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.`;
+            return `Yang bertanda tangan di bawah ini Kepala Desa Ginunggung, Kecamatan Galang, Kabupaten Tolitoli, Provinsi Sulawesi Tengah, dengan ini menerangkan bahwa:
+
+Nama Lengkap : ${s.nama}
+NIK : ${s.nik}
+Tempat / Tanggal Lahir : ${s.ttl || '-'}
+Jenis Kelamin : ${s.gender || '-'}
+Pekerjaan : ${s.pekerjaan || '-'}
+Alamat : ${s.alamat || 'Desa Ginunggung, Kec. Galang, Kab. Tolitoli'}
+
+${paragrafKhusus}
+
+Adapun surat keterangan ini diberikan kepada yang bersangkutan untuk dipergunakan sebagai: ${s.keperluan || 'Kelengkapan Administrasi'}.
+
+Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.`;
         }
 
         // =================================================================
@@ -1573,7 +1588,6 @@
                     </div>
                     <h4 class="font-bold text-slate-900 text-sm">${p.nama}</h4>
                     <div class="text-xs font-semibold text-emerald-700 mt-0.5">${p.jabatan}</div>
-                    <div class="text-[11px] text-slate-400 font-mono mt-1">${p.nip || '-'}</div>
                 </div>
             `).join('');
 
@@ -1758,7 +1772,6 @@
                 <tr class="hover:bg-slate-50">
                     <td class="p-3 font-bold text-slate-900">${p.nama}</td>
                     <td class="p-3 text-emerald-700 font-semibold">${p.jabatan}</td>
-                    <td class="p-3 font-mono text-xs">${p.nip}</td>
                     <td class="p-3 text-center space-x-2">
                         <button onclick="openModalPerangkatForm(${p.id})" class="text-sky-600 hover:text-sky-800"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="deleteItem('perangkat', ${p.id})" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
@@ -1773,7 +1786,6 @@
                 document.getElementById('cfg-kode-pos').value = cfg.kodePos;
                 document.getElementById('cfg-alamat-kantor').value = cfg.alamatKantor;
                 document.getElementById('cfg-nama-kades').value = cfg.namaKades;
-                document.getElementById('cfg-nip-kades').value = cfg.nipKades;
             }
         }
 
@@ -2066,7 +2078,6 @@
                             <div>Ginunggung, ${tglIndo}</div>
                             <div style="font-weight: bold; margin-bottom: 68px;">KEPALA ${cfg.namaDesa.toUpperCase()}</div>
                             <div style="font-weight: bold; text-decoration: underline;">${cfg.namaKades}</div>
-                            <div style="font-size: 10.5pt;">NIP/NIAP. ${cfg.nipKades}</div>
                         </div>
                     </div>
                 </div>
@@ -2341,7 +2352,7 @@
         }
 
         async function openModalPerangkatForm(id = null) {
-            let p = { nama: '', jabatan: '', nip: '' };
+            let p = { nama: '', jabatan: '' };
             if (id) p = await dbOp.get('perangkat', id);
             openModal(`
                 <div class="p-5 border-b bg-slate-900 text-white flex justify-between items-center">
@@ -2351,7 +2362,6 @@
                 <form onsubmit="savePerangkatForm(event, ${id || 'null'})" class="p-6 space-y-3 text-xs">
                     <div><label class="font-bold block mb-1">Nama Lengkap & Gelar *</label><input type="text" id="fp-nama" value="${p.nama}" required class="w-full p-2.5 border rounded-xl"></div>
                     <div><label class="font-bold block mb-1">Jabatan *</label><input type="text" id="fp-jabatan" value="${p.jabatan}" required class="w-full p-2.5 border rounded-xl"></div>
-                    <div><label class="font-bold block mb-1">NIP / NIAP</label><input type="text" id="fp-nip" value="${p.nip}" class="w-full p-2.5 border rounded-xl font-mono"></div>
                     <div class="pt-3 border-t flex justify-end gap-2">
                         <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 rounded-xl font-bold">Batal</button>
                         <button type="submit" class="px-5 py-2 bg-emerald-700 text-white rounded-xl font-bold">Simpan</button>
@@ -2364,8 +2374,7 @@
             e.preventDefault();
             const obj = {
                 nama: document.getElementById('fp-nama').value.trim(),
-                jabatan: document.getElementById('fp-jabatan').value.trim(),
-                nip: document.getElementById('fp-nip').value.trim()
+                jabatan: document.getElementById('fp-jabatan').value.trim()
             };
             if (id) obj.id = id;
             id ? await dbOp.put('perangkat', obj) : await dbOp.add('perangkat', obj);
@@ -2401,7 +2410,6 @@
             cfg.kodePos = document.getElementById('cfg-kode-pos').value.trim();
             cfg.alamatKantor = document.getElementById('cfg-alamat-kantor').value.trim();
             cfg.namaKades = document.getElementById('cfg-nama-kades').value.trim();
-            cfg.nipKades = document.getElementById('cfg-nip-kades').value.trim();
             await dbOp.put('config', cfg);
             showToast('Pengaturan KOP Surat & Desa berhasil disimpan');
             await refreshAllUI();
